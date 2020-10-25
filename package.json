@@ -1,6 +1,6 @@
 {
   "name": "webnet",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "WebSockets with a Node.js net compatible interface",
   "main": "index.js",
   "browser": "./browser.js",
