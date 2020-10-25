@@ -1,4 +1,4 @@
-# ws-net
+# webnet
 
 WebSockets with a Node.js `net` compatible interface.
 
