@@ -1,0 +1,22 @@
+{
+  "name": "webnet",
+  "version": "0.0.0",
+  "description": "WebSockets with a Node.js net compatible interface",
+  "main": "index.js",
+  "browser": "./browser.js",
+  "dependencies": {
+    "streamx": "^2.7.1",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mafintosh/webnet.git"
+  },
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafintosh/webnet/issues"
+  },
+  "homepage": "https://github.com/mafintosh/webnet"
+}
