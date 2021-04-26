@@ -1,4 +1,5 @@
 const { Duplex } = require('streamx')
+const preventGlobalError = () => {}
 
 module.exports = class WebSocketStream extends Duplex {
   constructor (socket) {
@@ -8,11 +9,11 @@ module.exports = class WebSocketStream extends Duplex {
 
     if (this.socket.on) {
       this.socket.on('message', (data) => this._pushBuffer(data))
-      this.socket.on('error', (err) => this.destroy(err))
+      this.socket.on('error', preventGlobalError)
     } else {
       this.socket.binaryType = 'arraybuffer'
       this.socket.onmessage = (e) => this.push(Buffer.from(e.data))
-      this.socket.onerror = (err) => this.destroy(err)
+      this.socket.onerror = preventGlobalError
     }
 
     this._readableState.updateNextTick() // trigger open straight way
@@ -29,8 +30,16 @@ module.exports = class WebSocketStream extends Duplex {
     if (this.socket.readyState !== 0) return cb(new Error('Closed'))
 
     const self = this
+    let opened = false
     const onopen = () => done(null)
-    const onclose = () => done(new Error('Closed'))
+    const onclose = (event) => {
+      const error = eventToError(event)
+      if (opened) {
+        this.destroy(error)
+      } else {
+        done(error)
+      }
+    }
 
     if (this.socket.on) {
       this.socket.on('open', onopen)
@@ -41,12 +50,11 @@ module.exports = class WebSocketStream extends Duplex {
     }
 
     function done (err) {
+      opened = true
       if (self.socket.on) {
         self.socket.removeListener('open', onopen)
-        self.socket.removeListener('close', onclose)
       } else {
         self.socket.onopen = null
-        self.socket.onclose = null
       }
 
       if (!err) self.emit('connect')
@@ -67,4 +75,8 @@ module.exports = class WebSocketStream extends Duplex {
     this.socket.send(data)
     cb(null)
   }
+}
+
+function eventToError (event) {
+  return new Error(`Websocket closed[${event.code}] (reason="${event.reason}", clean=${event.wasClean})`)
 }
