@@ -78,5 +78,5 @@ module.exports = class WebSocketStream extends Duplex {
 }
 
 function eventToError (event) {
-  return new Error(`Websocket closed[${event.code}] (reason="${event.reason}", clean=${event.wasClean})`)
+  return new Error(`Websocket[url=${event.target.url}] closed[${event.code}] (reason="${event.reason}", clean=${event.wasClean})`)
 }
